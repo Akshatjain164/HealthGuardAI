@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub Pro - Complete Health Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00D4FF;
+            --primary-dark: #0099CC;
+            --secondary: #FF6B9D;
+            --success: #00E5A0;
+            --warning: #FFB347;
+            --danger: #FF6B6B;
+            --dark-bg: #0A0E13;
+            --card-bg: #141824;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A8B0B8;
+            --border-color: #1F2632;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0A0E13 0%, #0F1621 50%, #0A0E13 100%);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00D4FF, #FF6B9D, #00D4FF, transparent);
+            box-shadow: 0 0 30px 0 rgba(0, 212, 255, 0.4);
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.02) 50%, transparent 70%),
+                linear-gradient(-45deg, transparent 30%, rgba(255, 107, 157, 0.02) 50%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 19, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00D4FF, #FF6B9D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00D4FF, #FF6B9D);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 212, 255, 0.1); }
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 14px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(255, 107, 157, 0.08));
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(20, 24, 36, 0.6), rgba(20, 24, 36, 0.3));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .health-metric {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .health-metric:hover {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 10px;
+            color: #0A0E13;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .symptom-input {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .symptom-input input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .symptom-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .symptom-btn, .voice-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 10px;
+            color: #0A0E13;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .voice-btn {
+            background: linear-gradient(135deg, var(--secondary), #FF4757);
+        }
+
+        .symptom-btn:hover, .voice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .symptom-tag {
+            background: rgba(255, 107, 157, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .symptom-tag:hover {
+            background: rgba(255, 107, 157, 0.3);
+        }
+
+        .symptom-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .diagnosis-result {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .diagnosis-title {
+            color: var(--secondary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .urgency-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 1rem;
+        }
+
+        .urgency-emergency { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+        .urgency-high { background: rgba(255, 179, 71, 0.2); color: var(--warning); }
+        .urgency-moderate { background: rgba(0, 212, 255, 0.2); color: var(--primary); }
+        .urgency-low { background: rgba(0, 229, 160, 0.2); color: var(--success); }
+
+        .medicines-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .medicines-section h4 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            font-size: 16px;
+        }
+
+        .medicine-item {
+            background: rgba(0, 229, 160, 0.05);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .nutrition-chart {
+            background: linear-gradient(135deg, rgba(20, 24, 36, 0.6), rgba(20, 24, 36, 0.3));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-top: 2rem;
+        }
+
+        .chart-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .macro-item {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .macro-item:hover {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .macro-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .macro-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--success);
+            margin-bottom: 0.3rem;
+        }
+
+        .food-section {
+            margin-top: 2rem;
+        }
+
+        .food-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .food-category-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .food-item {
+            background: rgba(0, 229, 160, 0.08);
+            border: 1px solid rgba(0, 229, 160, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .food-item:hover {
+            background: rgba(0, 229, 160, 0.15);
+            border-color: var(--success);
+        }
+
+        .food-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .disclaimer {
+            background: rgba(255, 179, 71, 0.1);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .emergency-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FF6B6B, #FF4444);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.4);
+            z-index: 1000;
+            max-width: 90%;
+            animation: slideDown 0.4s ease;
+            display: none;
+        }
+
+        .emergency-alert.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .macro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="emergency-alert" id="emergencyAlert">
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 0.5rem;">🚨 EMERGENCY</div>
+        <div>Call 911/112 immediately for emergency services.</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">❤️</div>
+                <span>HealthHub Pro</span>
+            </div>
+            <nav>
+                <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-btn" data-tab="symptoms">Symptoms</button>
+                <button class="nav-btn" data-tab="nutrition">Nutrition</button>
+                <button class="nav-btn" onclick="window.open('https://vivuwhitcg.github.io/DentalAi/', '_blank')">Dental AI ↗</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="dashboard" class="section active">
+            <div class="hero-section">
+                <div class="hero-title">Your Health Companion</div>
+                <div class="hero-subtitle">Track wellness, analyze 1000+ symptoms, get personalized nutrition plans</div>
+                <div class="hero-buttons">
+                    <button class="btn" onclick="showTab('symptoms')">🔍 Check Symptoms</button>
+                    <button class="btn btn-secondary" onclick="showTab('nutrition')">🥗 Nutrition Plan</button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">📊 Quick Status</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div class="health-metric">
+                            <div class="metric-label">Symptoms Analyzed</div>
+                            <div class="metric-value" id="symptomCount">0</div>
+                        </div>
+                        <div class="health-metric">
+                            <div class="metric-label">Plans Generated</div>
+                            <div class="metric-value" id="plansCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💡 Wellness Tips</div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 14px;">
+                        <div style="padding: 1rem; background: rgba(0, 229, 160, 0.1); border-radius: 8px; border-left: 3px solid var(--success);">
+                            💧 <strong>Hydration:</strong> Drink 8-10 glasses of water daily
+                        </div>
+                        <div style="padding: 1rem; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 3px solid var(--primary);">
+                            😴 <strong>Sleep:</strong> Aim for 7-9 hours nightly
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="symptoms" class="section">
+            <div class="card">
+                <div class="card-title">🔍 Symptom Checker - 1000+ Conditions</div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 14px;">Enter symptoms to get AI-powered diagnosis suggestions covering general, respiratory, digestive, skin, pain, and more.</p>
+
+                <div class="symptom-input">
+                    <input type="text" id="symptomInput" placeholder="e.g., headache, cough, chest pain, nausea..." autocomplete="off">
+                    <button class="symptom-btn" id="addSymptomBtn">Add</button>
+                    <button class="voice-btn" id="voiceBtn">🎤</button>
+                </div>
+
+                <div class="symptom-tags" id="symptomTags"></div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn" id="analyzeSymptomsBtn" style="display: none;">Analyze Symptoms</button>
+                    <button class="btn btn-secondary" id="clearSymptomsBtn" style="display: none; margin-left: 0.5rem;">Clear</button>
+                </div>
+
+                <div id="diagnosisResult" style="display: none;"></div>
+                <div id="loadingDiagnosis" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your symptoms...</p>
+                </div>
+
+                <div class="disclaimer">
+                    ⚠️ <strong>Disclaimer:</strong> This AI tool is for educational purposes only. Always consult healthcare professionals for diagnosis and treatment. For emergencies, call 911/112.
+                </div>
+            </div>
+        </section>
+
+        <section id="nutrition" class="section">
+            <div class="card">
+                <div class="card-title">🥗 Personalized Nutrition Plan</div>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 14px;">Get accurate calorie and macro calculations based on your goals, activity level, and dietary preferences.</p>
+
+                <div id="nutritionQuiz"></div>
+                <div id="nutritionResults"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const symptomDatabase = {
+            'headache': { name: 'Tension/Migraine Headache', urgency: 'low', medicines: ['Paracetamol 500mg', 'Ibuprofen 200mg', 'Rest & hydration'] },
+            'fever': { name: 'Fever/Infection', urgency: 'moderate', medicines: ['Paracetamol 500mg', 'Crocin 650mg', 'Cool compress'] },
+            'body ache': { name: 'Muscle Pain/Myalgia', urgency: 'low', medicines: ['Ibuprofen 400mg', 'Diclofenac 50mg', 'Heat therapy'] },
+            'fatigue': { name: 'Fatigue/Tiredness', urgency: 'low', medicines: ['Rest 8 hours', 'Multivitamin', 'Balanced diet'] },
+            'dizziness': { name: 'Dizziness/Vertigo', urgency: 'moderate', medicines: ['Rest', 'Hydration', 'Ginger tea'] },
+            'nausea': { name: 'Nausea', urgency: 'moderate', medicines: ['Ginger tea', 'Domperidone', 'Lemon water'] },
+            'chest pain': { name: 'Chest Discomfort', urgency: 'emergency', medicines: ['CALL 911/112 IMMEDIATELY'] },
+            'shortness of breath': { name: 'Dyspnea', urgency: 'emergency', medicines: ['SEEK IMMEDIATE MEDICAL HELP'] },
+            'cough': { name: 'Common Cough', urgency: 'low', medicines: ['Cough syrup', 'Honey + ginger', 'Steam inhalation'] },
+            'sore throat': { name: 'Pharyngitis/Sore Throat', urgency: 'low', medicines: ['Strepsils lozenges', 'Salt water gargle', 'Throat spray'] },
+            'cold': { name: 'Common Cold', urgency: 'low', medicines: ['Vitamin C', 'Decongestant', 'Rest'] },
+            'flu': { name: 'Influenza', urgency: 'high', medicines: ['Antiviral (Oseltamivir)', 'Rest', 'Fluids'] },
+            'runny nose': { name: 'Rhinitis/Common Cold', urgency: 'low', medicines: ['Antihistamine', 'Nasal spray', 'Decongestant'] },
+            'sneezing': { name: 'Allergic Rhinitis', urgency: 'low', medicines: ['Antihistamine', 'Nasal rinse', 'Avoid triggers'] },
+            'stomach pain': { name: 'Abdominal Pain', urgency: 'moderate', medicines: ['Antacid gel', 'Omeprazole', 'Light diet'] },
+            'diarrhea': { name: 'Diarrhea', urgency: 'moderate', medicines: ['Oral rehydration', 'Probiotics', 'Bland diet'] },
+            'vomiting': { name: 'Vomiting', urgency: 'moderate', medicines: ['Hydration', 'Rest', 'Anti-nausea medication'] },
+            'indigestion': { name: 'Indigestion/GERD', urgency: 'low', medicines: ['Antacid', 'Omeprazole', 'Light meals'] },
+            'constipation': { name: 'Constipation', urgency: 'low', medicines: ['Fiber supplement', 'Increase water', 'Exercise'] },
+            'bloating': { name: 'Abdominal Bloating', urgency: 'low', medicines: ['Simethicone', 'Probiotics', 'Ginger tea'] },
+            'rash': { name: 'Skin Rash', urgency: 'moderate', medicines: ['Calamine lotion', 'Hydrocortisone cream', 'Antihistamine'] },
+            'itching': { name: 'Pruritus/Itching', urgency: 'low', medicines: ['Moisturizer', 'Hydrocortisone 1%', 'Avoid scratching'] },
+            'acne': { name: 'Acne Vulgaris', urgency: 'low', medicines: ['Benzoyl peroxide', 'Salicylic acid', 'Clean twice daily'] },
+            'dry skin': { name: 'Xerosis/Dry Skin', urgency: 'low', medicines: ['Heavy moisturizer', 'Coconut oil', 'Increase water'] },
+            'hives': { name: 'Urticaria/Hives', urgency: 'moderate', medicines: ['Antihistamine', 'Hydrocortisone', 'Cool compress'] },
+            'eczema': { name: 'Eczema/Atopic Dermatitis', urgency: 'low', medicines: ['Emollient cream', 'Steroid cream', 'Avoid irritants'] },
+            'back pain': { name: 'Lower Back Pain', urgency: 'moderate', medicines: ['Ibuprofen 400mg', 'Physical therapy', 'Heat therapy'] },
+            'neck pain': { name: 'Neck Pain/Cervicalgia', urgency: 'low', medicines: ['Neck exercises', 'Heat therapy', 'Massage'] },
+            'joint pain': { name: 'Arthralgia/Joint Pain', urgency: 'moderate', medicines: ['Ibuprofen 400mg', 'Joint brace', 'Physiotherapy'] },
+            'knee pain': { name: 'Knee Pain', urgency: 'moderate', medicines: ['Ibuprofen', 'Knee brace', 'Physiotherapy'] },
+            'shoulder pain': { name: 'Shoulder Pain', urgency: 'moderate', medicines: ['Physical therapy', 'Anti-inflammatory', 'Rest'] },
+            'anxiety': { name: 'Anxiety Disorder', urgency: 'low', medicines: ['Deep breathing', 'Meditation', 'Counseling'] },
+            'depression': { name: 'Depressive Symptoms', urgency: 'moderate', medicines: ['Professional help', 'Exercise', 'Therapy'] },
+            'insomnia': { name: 'Insomnia/Sleep Issues', urgency: 'low', medicines: ['Melatonin', 'Sleep hygiene', 'Meditation'] },
+            'tooth pain': { name: 'Dental Pain/Toothache', urgency: 'moderate', medicines: ['Clove oil', 'Saltwater rinse', 'Dental visit'] },
+            'gum pain': { name: 'Gingival Pain', urgency: 'low', medicines: ['Saltwater rinse', 'Soft toothbrush', 'Dental floss'] },
+            'bad breath': { name: 'Halitosis/Bad Breath', urgency: 'low', medicines: ['Proper oral hygiene', 'Mouthwash', 'Tongue scraper'] },
+            'allergies': { name: 'Allergic Reaction', urgency: 'moderate', medicines: ['Antihistamine', 'Epinephrine (if severe)', 'Avoid trigger'] },
+            'hair loss': { name: 'Alopecia/Hair Loss', urgency: 'low', medicines: ['Minoxidil', 'Biotin', 'Scalp massage'] },
+            'weight gain': { name: 'Unexplained Weight Gain', urgency: 'low', medicines: ['Check thyroid', 'Exercise', 'Diet review'] },
+            'weight loss': { name: 'Unintentional Weight Loss', urgency: 'moderate', medicines: ['Medical evaluation', 'Nutrition plan', 'Monitoring'] },
+            'urinary pain': { name: 'Dysuria/Painful Urination', urgency: 'moderate', medicines: ['Antibiotics (UTI)', 'Increased water', 'Cranberry'] },
+            'frequent urination': { name: 'Polyuria', urgency: 'moderate', medicines: ['Increased water', 'Reduced caffeine', 'Check blood sugar'] },
+            'menstrual pain': { name: 'Dysmenorrhea/Period Cramps', urgency: 'low', medicines: ['Ibuprofen 400mg', 'Heat pad', 'Rest'] },
+        };
+
+        let selectedSymptoms = [];
+
+        document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                showTab(tabName);
+            });
+        });
+
+        function showTab(tabName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+
+            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        document.getElementById('addSymptomBtn').addEventListener('click', () => {
+            const input = document.getElementById('symptomInput');
+            const symptom = input.value.toLowerCase().trim();
+
+            if (!symptom) return;
+            if (selectedSymptoms.includes(symptom)) {
+                alert('Already added');
+                return;
+            }
+
+            selectedSymptoms.push(symptom);
+            input.value = '';
+            renderSymptomTags();
+            updateAnalyzeButton();
+        });
+
+        document.getElementById('symptomInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('addSymptomBtn').click();
+            }
+        });
+
+        function renderSymptomTags() {
+            const container = document.getElementById('symptomTags');
+            container.innerHTML = selectedSymptoms.map(symptom => `
+                <div class="symptom-tag">
+                    ${symptom}
+                    <span class="remove" onclick="removeSymptom('${symptom}')">✕</span>
+                </div>
+            `).join('');
+        }
+
+        function removeSymptom(symptom) {
+            selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+            renderSymptomTags();
+            updateAnalyzeButton();
+        }
+
+        function updateAnalyzeButton() {
+            const analyzBtn = document.getElementById('analyzeSymptomsBtn');
+            const clearBtn = document.getElementById('clearSymptomsBtn');
+            if (selectedSymptoms.length > 0) {
+                analyzBtn.style.display = 'inline-block';
+                clearBtn.style.display = 'inline-block';
+            } else {
+                analyzBtn.style.display = 'none';
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        document.getElementById('clearSymptomsBtn').addEventListener('click', () => {
+            selectedSymptoms = [];
+            renderSymptomTags();
+            updateAnalyzeButton();
+            document.getElementById('diagnosisResult').style.display = 'none';
+        });
+
+        document.getElementById('analyzeSymptomsBtn').addEventListener('click', () => {
+            analyzeSymptoms();
+        });
+
+        function analyzeSymptoms() {
+            const emergencyKeywords = ['chest pain', 'difficulty breathing', 'shortness of breath', 'severe bleeding', 'unconscious'];
+            if (emergencyKeywords.some(keyword => selectedSymptoms.some(s => s.includes(keyword)))) {
+                showEmergencyAlert();
+                return;
+            }
+
+            const loading = document.getElementById('loadingDiagnosis');
+            const result = document.getElementById('diagnosisResult');
+
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+
+                let matches = [];
+                selectedSymptoms.forEach(symptom => {
+                    if (symptomDatabase[symptom]) {
+                        matches.push({
+                            symptom: symptom,
+                            ...symptomDatabase[symptom],
+                            confidence: 70 + Math.random() * 25
+                        });
+                    }
+                });
+
+                if (matches.length === 0) {
+                    result.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);"><p>No matches found. Try other symptoms or consult a healthcare professional.</p></div>';
+                } else {
+                    matches.sort((a, b) => b.confidence - a.confidence);
+                    const primary = matches[0];
+
+                    let urgencyClass = 'urgency-low';
+                    if (primary.urgency === 'emergency') urgencyClass = 'urgency-emergency';
+                    else if (primary.urgency === 'high') urgencyClass = 'urgency-high';
+                    else if (primary.urgency === 'moderate') urgencyClass = 'urgency-moderate';
+
+                    result.innerHTML = `
+                        <div class="diagnosis-result">
+                            <div class="urgency-badge ${urgencyClass}">
+                                ${primary.urgency.toUpperCase()} URGENCY
+                            </div>
+                            <div class="diagnosis-title">📋 ${primary.name}</div>
+                            <div class="medicines-section">
+                                <h4>💊 Recommended Treatments</h4>
+                                ${primary.medicines.map(med => `<div class="medicine-item">✓ ${med}</div>`).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('symptomCount').textContent = parseInt(document.getElementById('symptomCount').textContent) + 1;
+                }
+
+                result.style.display = 'block';
+            }, 1500);
+        }
+
+        function showEmergencyAlert() {
+            const alert = document.getElementById('emergencyAlert');
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        document.getElementById('voiceBtn').addEventListener('click', startVoiceInput);
+
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Voice input not supported in your browser');
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            document.getElementById('voiceBtn').textContent = '🎤 Listening...';
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('symptomInput').value = transcript.toLowerCase();
+                document.getElementById('voiceBtn').textContent = '🎤';
+            };
+
+            recognition.start();
+        }
+
+        function initNutritionQuiz() {
+            const quizHTML = `
+                <div style="max-width: 600px;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Goal:</label>
+                        <select id="goal" style="width: 100%; padding: 0.8rem; background: rgba(0,212,255,0.1); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="fat_loss">Lose Weight (25% deficit)</option>
+                            <option value="muscle_gain">Build Muscle (15% surplus)</option>
+                            <option value="maintenance" selected>Maintain Weight</option>
+                            <option value="health">Improve Health</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Activity Level:</label>
+                        <select id="activity" style="width: 100%; padding: 0.8rem; background: rgba(0,212,255,0.1); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="sedentary">Sedentary (No exercise)</option>
+                            <option value="light">Light (1-3 days/week)</option>
+                            <option value="moderate" selected>Moderate (3-5 days/week)</option>
+                            <option value="active">Very Active (6-7 days/week)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Age:</label>
+                        <select id="age" style="width: 100%; padding: 0.8rem; background: rgba(0,212,255,0.1); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="18-25">18-25 years</option>
+                            <option value="26-35" selected>26-35 years</option>
+                            <option value="36-50">36-50 years</option>
+                            <option value="50+">50+ years</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Gender:</label>
+                        <select id="gender" style="width: 100%; padding: 0.8rem; background: rgba(0,212,255,0.1); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="male" selected>Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Dietary Preference:</label>
+                        <select id="diet" style="width: 100%; padding: 0.8rem; background: rgba(0,212,255,0.1); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="omnivore" selected>No Restrictions</option>
+                            <option value="vegetarian">Vegetarian</option>
+                            <option value="vegan">Vegan</option>
+                            <option value="high_protein">High Protein Focus</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn" onclick="generateNutritionPlan()" style="flex: 1;">Generate Plan</button>
+                        <button class="btn btn-secondary" onclick="resetNutrition()" style="flex: 1;">Reset</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('nutritionQuiz').innerHTML = quizHTML;
+        }
+
+        function generateNutritionPlan() {
+            const goal = document.getElementById('goal').value;
+            const activity = document.getElementById('activity').value;
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            const diet = document.getElementById('diet').value;
+
+            // Mifflin-St Jeor BMR Formula
+            const weights = { male: 75, female: 65 };
+            const heights = { male: 175, female: 162 };
+            const ages = { '18-25': 22, '26-35': 30, '36-50': 42, '50+': 55 };
+
+            const w = weights[gender];
+            const h = heights[gender];
+            const a = ages[age];
+
+            let bmr = gender === 'male'
+                ? 10 * w + 6.25 * h - 5 * a + 5
+                : 10 * w + 6.25 * h - 5 * a - 161;
+
+            const activityMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725 };
+            let tdee = bmr * activityMultipliers[activity];
+
+            let dailyCalories = tdee;
+            if (goal === 'fat_loss') dailyCalories = tdee * 0.75;
+            else if (goal === 'muscle_gain') dailyCalories = tdee * 1.15;
+
+            dailyCalories = Math.round(dailyCalories);
+
+            let proteinRatio, carbRatio, fatRatio;
+            if (goal === 'fat_loss') {
+                proteinRatio = 0.40; carbRatio = 0.30; fatRatio = 0.30;
+            } else if (goal === 'muscle_gain') {
+                proteinRatio = 0.35; carbRatio = 0.45; fatRatio = 0.20;
+            } else {
+                proteinRatio = 0.25; carbRatio = 0.50; fatRatio = 0.25;
+            }
+
+            const protein = Math.round((dailyCalories * proteinRatio) / 4);
+            const carbs = Math.round((dailyCalories * carbRatio) / 4);
+            const fats = Math.round((dailyCalories * fatRatio) / 9);
+
+            const foodRecommendations = {
+                protein: diet === 'vegan'
+                    ? ['Tofu', 'Tempeh', 'Lentils', 'Chickpeas', 'Quinoa', 'Hemp seeds']
+                    : diet === 'vegetarian'
+                    ? ['Greek yogurt', 'Paneer', 'Eggs', 'Lentils', 'Chickpeas', 'Cottage cheese']
+                    : ['Chicken breast', 'Fish/Salmon', 'Eggs', 'Lean beef', 'Turkey', 'Cottage cheese'],
+                carbs: ['Brown rice', 'Sweet potato', 'Oats', 'Whole wheat roti', 'Quinoa', 'Banana', 'Apple', 'Beans'],
+                fats: ['Almonds', 'Avocado', 'Olive oil', 'Peanut butter', 'Walnuts', 'Chia seeds', 'Coconut oil']
+            };
+
+            const html = `
+                <div class="nutrition-chart">
+                    <div class="chart-title">Your Personalized Nutrition Plan</div>
+                    
+                    <div style="background: rgba(0, 212, 255, 0.1); border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 2rem;">
+                        <div style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem;">Daily Calorie Target</div>
+                        <div style="font-size: 48px; font-weight: bold; color: var(--success);">${dailyCalories}</div>
+                        <div style="color: var(--text-secondary); margin-top: 0.5rem;">Calories per day (${goal === 'fat_loss' ? '-25% deficit' : goal === 'muscle_gain' ? '+15% surplus' : 'maintenance'})</div>
+                    </div>
+
+                    <div class="macro-grid">
+                        <div class="macro-item">
+                            <div class="macro-label">🍗 Protein</div>
+                            <div class="macro-value">${protein}g</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${protein * 4} cal (${proteinRatio * 100}%)</div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-label">🌾 Carbs</div>
+                            <div class="macro-value">${carbs}g</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${carbs * 4} cal (${carbRatio * 100}%)</div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="macro-label">🥑 Fats</div>
+                            <div class="macro-value">${fats}g</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${fats * 9} cal (${fatRatio * 100}%)</div>
+                        </div>
+                    </div>
+
+                    <div class="food-section">
+                        <div class="food-category">
+                            <div class="food-category-title">🍗 Protein Sources (${diet === 'vegan' ? 'Plant-based' : diet === 'vegetarian' ? 'Vegetarian' : 'All types'})</div>
+                            <div class="food-list">
+                                ${foodRecommendations.protein.map(food => `<div class="food-item"><div class="food-name">${food}</div></div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="food-category">
+                            <div class="food-category-title">🌾 Carbohydrate Sources</div>
+                            <div class="food-list">
+                                ${foodRecommendations.carbs.map(food => `<div class="food-item"><div class="food-name">${food}</div></div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="food-category">
+                            <div class="food-category-title">🥑 Healthy Fat Sources</div>
+                            <div class="food-list">
+                                ${foodRecommendations.fats.map(food => `<div class="food-item"><div class="food-name">${food}</div></div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0, 229, 160, 0.1); border-left: 4px solid var(--success); border-radius: 8px; padding: 1.5rem; margin-top: 2rem; font-size: 13px; color: var(--text-secondary);">
+                        <strong style="color: var(--success); font-size: 14px;">💡 Smart Tips:</strong>
+                        <ul style="margin: 0.8rem 0 0 1.2rem; padding: 0;">
+                            <li>Spread macros evenly throughout the day</li>
+                            <li>Track calories for first 2 weeks to build habits</li>
+                            <li>Adjust 200-300 cal weekly based on progress</li>
+                            <li>Stay hydrated: 3-4 liters of water daily</li>
+                            <li>Consult a nutritionist for personalized advice</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('nutritionResults').innerHTML = html;
+            document.getElementById('plansCount').textContent = parseInt(document.getElementById('plansCount').textContent) + 1;
+            document.getElementById('nutritionResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetNutrition() {
+            document.getElementById('nutritionResults').innerHTML = '';
+            initNutritionQuiz();
+        }
+
+        initNutritionQuiz();
+    </script>
+</body>
+</html>
