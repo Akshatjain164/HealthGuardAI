@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub Pro v4 - Premium Health Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
+
+        :root {
+            --primary: #22d3ee;
+            --primary-dark: #0ea5e9;
+            --secondary: #f97373;
+            --success: #4ade80;
+            --warning: #facc15;
+            --danger: #f97373;
+            --dark-bg: #020617;
+            --card-bg: #020617;
+            --surface: #020617;
+            --border-color: rgba(148, 163, 184, 0.25);
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.85);
+            --blur-strong: blur(26px);
+            --font-heading: 'Poppins', 'Sora', sans-serif;
+            --font-body: 'Inter', 'Sora', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(56,189,248,0.18) 0, transparent 55%),
+                radial-gradient(circle at 90% 10%, rgba(248,113,113,0.18) 0, transparent 55%),
+                radial-gradient(circle at 15% 80%, rgba(74,222,128,0.16) 0, transparent 55%),
+                #020617;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(148,163,184,0.12), transparent 55%, rgba(56,189,248,0.15));
+            opacity: 0.35;
+            pointer-events: none;
+            mix-blend-mode: soft-light;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(960px, 90vw);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(56,189,248,0.7), rgba(248,113,113,0.7), transparent);
+            opacity: 0.7;
+            box-shadow: 0 0 20px rgba(15,23,42,0.9);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(34,211,238,0.5); }
+            50% { box-shadow: 0 0 40px rgba(34,211,238,0.8); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: var(--blur-strong);
+            background: linear-gradient(
+                to bottom,
+                rgba(15,23,42,0.96),
+                rgba(15,23,42,0.90),
+                rgba(15,23,42,0.85)
+            );
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #22d3ee, #f97373);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .logo-img {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #22d3ee, #f97373);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 30px rgba(34,211,238,0.4);
+            flex-shrink: 0;
+            animation: bounce 3s ease-in-out infinite;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(34,211,238,0.15);
+            border-color: rgba(34,211,238,0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: radial-gradient(circle at 0% 0%, rgba(34,211,238,0.4), rgba(15,23,42,1));
+            color: #e5e7eb;
+            border-color: rgba(34,211,238,0.6);
+            box-shadow: 0 0 20px rgba(34,211,238,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* === HERO SECTION === */
+        .hero-section {
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            margin-bottom: 2.5rem;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(56,189,248,0.22), transparent 65%),
+                radial-gradient(circle at 100% 0%, rgba(248,113,113,0.20), transparent 60%),
+                rgba(15,23,42,0.92);
+            border: 1px solid rgba(148,163,184,0.45);
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-section > div:first-child {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #22d3ee, #f97373);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
+            font-family: var(--font-heading);
+        }
+
+        .hero-section .hero-subtitle,
+        .hero-section > div:nth-child(2) {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        /* === CARDS === */
+        .card {
+            background: radial-gradient(circle at 0% 0%, rgba(148,163,184,0.12), transparent 55%), rgba(15,23,42,0.96);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(34,211,238,0.6);
+            box-shadow: 0 30px 60px rgba(34,211,238,0.15);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            font-family: var(--font-heading);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* === HEALTH METRICS === */
+        .health-metric {
+            border-radius: 16px;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148,163,184,0.4);
+            padding: 1.5rem 1.2rem;
+            text-align: center;
+            transition: all 0.3s ease-out;
+        }
+
+        .health-metric:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34,211,238,0.8);
+            background: radial-gradient(circle at 50% 0%, rgba(34,211,238,0.2), rgba(15,23,42,1));
+            box-shadow: 0 10px 30px rgba(34,211,238,0.1);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--success), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: var(--font-heading);
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: 0;
+            border-radius: 999px;
+            color: #020617;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 30px rgba(34,211,238,0.3);
+            font-family: var(--font-body);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 45px rgba(34,211,238,0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(15,23,42,0.96);
+            color: var(--text-primary);
+            border: 1px solid rgba(148,163,184,0.55);
+            box-shadow: 0 8px 20px rgba(15,23,42,0.95);
+        }
+
+        .btn-secondary:hover {
+            background: radial-gradient(circle at 0% 0%, rgba(148,163,184,0.3), rgba(15,23,42,0.96));
+            border-color: rgba(34,211,238,0.7);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* === SECTIONS === */
+        .section {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* === SYMPTOM INPUT === */
+        .symptom-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .symptom-input input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.4);
+            background: rgba(15,23,42,0.9);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        .symptom-input input:focus {
+            outline: none;
+            border-color: rgba(34,211,238,0.9);
+            box-shadow: 0 0 0 1px rgba(15,23,42,1), 0 0 0 1px rgba(34,211,238,0.65), 0 0 20px rgba(15,23,42,0.85);
+            background: rgba(15,23,42,0.98);
+        }
+
+        .symptom-btn, .voice-btn {
+            border-radius: 999px;
+            padding: 12px 24px;
+            font-size: 13px;
+            border: 0;
+            font-weight: 600;
+            color: #020617;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .symptom-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 10px 25px rgba(34,211,238,0.3);
+        }
+
+        .voice-btn {
+            background: linear-gradient(135deg, var(--secondary), #f87171);
+            box-shadow: 0 10px 25px rgba(249,115,115,0.3);
+        }
+
+        .symptom-btn:hover, .voice-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* === SYMPTOM TAGS === */
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .symptom-tag {
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15,23,42,0.96);
+            border: 1px solid rgba(249,115,115,0.55);
+            color: #fecaca;
+            transition: all 0.2s ease;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .symptom-tag:hover {
+            transform: translateY(-1px);
+            background: radial-gradient(circle at 0% 0%, rgba(249,115,115,0.3), rgba(15,23,42,0.96));
+            border-color: rgba(249,115,115,0.9);
+        }
+
+        .symptom-tag .remove {
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        /* === DIAGNOSIS === */
+        .diagnosis-result {
+            margin-top: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(249,115,115,0.5);
+            background:
+                radial-gradient(circle at 0% 0%, rgba(249,115,115,0.35), transparent 55%),
+                radial-gradient(circle at 100% 0%, rgba(34,211,238,0.2), transparent 60%),
+                rgba(15,23,42,0.96);
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .diagnosis-title {
+            color: #fecaca;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            font-family: var(--font-heading);
+        }
+
+        .urgency-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 999px;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .urgency-emergency {
+            background: rgba(249,115,115,0.18);
+            color: #fecaca;
+            border: 1px solid rgba(249,115,115,0.7);
+        }
+
+        .urgency-high {
+            background: rgba(250,204,21,0.18);
+            color: #fef9c3;
+            border: 1px solid rgba(250,204,21,0.7);
+        }
+
+        .urgency-moderate {
+            background: rgba(34,211,238,0.18);
+            color: #cffafe;
+            border: 1px solid rgba(34,211,238,0.7);
+        }
+
+        .urgency-low {
+            background: rgba(74,222,128,0.18);
+            color: #dcfce7;
+            border: 1px solid rgba(74,222,128,0.7);
+        }
+
+        .next-steps {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(34,211,238,0.55);
+            background: rgba(15,23,42,0.95);
+            font-size: 13px;
+        }
+
+        .next-steps h5 {
+            font-size: 12px;
+            margin-bottom: 0.6rem;
+            color: #cffafe;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .next-steps ul {
+            margin: 0.4rem 0 0;
+            padding-left: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .medicines-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed rgba(148,163,184,0.5);
+        }
+
+        .medicines-section h4 {
+            font-size: 13px;
+            color: #86efac;
+            margin-bottom: 1rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .medicine-item {
+            font-size: 12px;
+            border-radius: 10px;
+            padding: 0.8rem;
+            margin-bottom: 0.6rem;
+            background: rgba(34,197,94,0.08);
+            border-left: 3px solid var(--success);
+            color: #dcfce7;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* === TIMELINE === */
+        .timeline {
+            position: relative;
+            padding: 1.5rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 1.8rem;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 3px rgba(34,211,238,0.25);
+        }
+
+        .timeline-content {
+            border-radius: 12px;
+            border: 1px solid rgba(148,163,184,0.45);
+            background: rgba(15,23,42,0.96);
+            padding: 1rem;
+        }
+
+        .timeline-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .timeline-symptom {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+            font-weight: 600;
+        }
+
+        .timeline-diagnosis {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* === REMINDERS GRID === */
+        .reminders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .reminder-card {
+            border-radius: var(--radius-md);
+            background: rgba(15,23,42,0.96);
+            border: 1px solid rgba(148,163,184,0.45);
+            padding: 1.2rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .reminder-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34,211,238,0.6);
+            background: radial-gradient(circle at 50% 0%, rgba(34,211,238,0.15), rgba(15,23,42,1));
+        }
+
+        .reminder-icon {
+            font-size: 28px;
+            margin-bottom: 0.5rem;
+        }
+
+        .reminder-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .reminder-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--success);
+            font-family: var(--font-heading);
+        }
+
+        /* === NUTRITION CHART === */
+        .nutrition-chart {
+            margin-top: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(148,163,184,0.55);
+            background:
+                radial-gradient(circle at 0% 0%, rgba(34,211,238,0.22), transparent 55%),
+                radial-gradient(circle at 100% 0%, rgba(74,222,128,0.15), transparent 60%),
+                rgba(15,23,42,0.97);
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            font-family: var(--font-heading);
+        }
+
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .macro-item {
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(15,23,42,0.97);
+            border: 1px solid rgba(148,163,184,0.5);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.7s ease-out;
+        }
+
+        .macro-item:hover {
+            transform: translateY(-4px);
+            border-color: rgba(34,211,238,0.75);
+            background: radial-gradient(circle at 0% 0%, rgba(34,211,238,0.18), rgba(15,23,42,1));
+            box-shadow: 0 15px 40px rgba(34,211,238,0.1);
+        }
+
+        .macro-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .macro-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 0.3rem;
+            font-family: var(--font-heading);
+        }
+
+        .meal-suggestion {
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            background: rgba(15,23,42,0.97);
+            border: 1px solid rgba(148,163,184,0.5);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .meal-time {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .meal-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            font-family: var(--font-heading);
+        }
+
+        .meal-macros {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .activity-logger {
+            margin-top: 1.5rem;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px dashed rgba(148,163,184,0.55);
+            background: rgba(15,23,42,0.96);
+        }
+
+        .activity-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .activity-input input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.45);
+            background: rgba(15,23,42,0.96);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: var(--font-body);
+        }
+
+        .activity-input input:focus {
+            outline: none;
+            border-color: rgba(34,211,238,0.85);
+        }
+
+        /* === MAP & DOCTORS === */
+        #mapContainer {
+            margin-top: 2rem;
+            border-radius: 18px;
+            padding: 1.5rem;
+            background: rgba(15,23,42,0.97);
+            border: 1px solid rgba(148,163,184,0.55);
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        #mapContainer.show {
+            display: block;
+        }
+
+        #map {
+            width: 100%;
+            height: 420px;
+            border-radius: 14px;
+            border: 1px solid rgba(148,163,184,0.45);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .doctor-list {
+            margin-top: 1rem;
+            border-radius: 14px;
+            padding: 1rem;
+            background: rgba(15,23,42,0.97);
+            border: 1px dashed rgba(148,163,184,0.7);
+        }
+
+        .doctor-item {
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            background: rgba(15,23,42,0.97);
+            border-left: 3px solid var(--success);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .doctor-item:hover {
+            transform: translateX(4px);
+            background: radial-gradient(circle at 0% 0%, rgba(34,197,94,0.22), rgba(15,23,42,1));
+            box-shadow: 0 10px 25px rgba(34,197,94,0.1);
+        }
+
+        .doctor-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            font-family: var(--font-heading);
+        }
+
+        .doctor-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* === HEALTH FACTS === */
+        .health-fact {
+            margin: 1rem 0;
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 3px solid var(--primary);
+            background: rgba(15,23,42,0.96);
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .health-fact strong {
+            color: #cffafe;
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 3px solid var(--warning);
+            background: rgba(15,23,42,0.97);
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* === EMERGENCY ALERT === */
+        .emergency-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1.2rem 1.8rem;
+            border-radius: 999px;
+            background: radial-gradient(circle at 0% 0%, #f97373, #b91c1c);
+            color: #fef2f2;
+            box-shadow: 0 20px 50px rgba(185,28,28,0.8);
+            z-index: 50;
+            max-width: 90%;
+            font-size: 13px;
+            display: none;
+            animation: slideInRight 0.5s ease-out;
+            font-weight: 600;
+        }
+
+        .emergency-alert.show {
+            display: block;
+        }
+
+        /* === MODAL === */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.85);
+            z-index: 45;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: var(--blur-strong);
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .modal-content {
+            width: min(500px, 92vw);
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 22px;
+            padding: 2rem;
+            background: radial-gradient(circle at 0% 0%, rgba(34,211,238,0.24), transparent 55%), rgba(15,23,42,0.98);
+            border: 1px solid rgba(148,163,184,0.6);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            font-family: var(--font-heading);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            border: 0;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid rgba(148,163,184,0.5);
+            background: rgba(15,23,42,0.96);
+            padding: 11px 14px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: rgba(34,211,238,0.85);
+            box-shadow: 0 0 15px rgba(34,211,238,0.15);
+        }
+
+        /* === LOADING === */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2.5px solid rgba(148,163,184,0.5);
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1rem 1.2rem;
+                flex-wrap: wrap;
+                row-gap: 0.8rem;
+            }
+
+            .dashboard-grid, .macro-grid, .reminders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1.2rem;
+            }
+
+            .hero-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logo {
+                font-size: 16px;
+            }
+
+            #map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="emergency-alert" id="emergencyAlert">
+        <div style="font-weight: bold; font-size: 15px; margin-bottom: 0.3rem;">🚨 EMERGENCY</div>
+        <div>Call 911/112 immediately for emergency services.</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-img">❤️</div>
+                <span>HealthHub Pro</span>
+            </div>
+            <nav>
+                <button class="nav-btn" onclick="openProfileModal()" title="Open Health Profile" style="background: rgba(249,115,115,0.2); color: var(--secondary); cursor: pointer;">❤️ Profile</button>
+                <button class="nav-btn active" data-tab="dashboard" style="cursor: pointer;">📊 Dashboard</button>
+                <button class="nav-btn" data-tab="symptoms" style="cursor: pointer;">🔍 Symptoms</button>
+                <button class="nav-btn" data-tab="history" style="cursor: pointer;">📅 History</button>
+                <button class="nav-btn" data-tab="nutrition" style="cursor: pointer;">🥗 Nutrition</button>
+                <button class="nav-btn" onclick="if(window.open('https://vivuwhitcg.github.io/DentalAi/', '_blank') === null) alert('Popup blocked'); return false;" style="cursor: pointer;">🦷 Dental AI</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard" class="section active">
+            <div class="hero-section">
+                <div style="font-size: 32px; font-weight: 900; margin-bottom: 0.6rem; letter-spacing: -0.03em;">HealthHub Pro</div>
+                <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem; max-width: 850px; margin-left: auto; margin-right: auto;">
+                    <strong style="color: var(--primary);">🌍 Our Mission:</strong><br>
+                    We built a scalable, privacy-first symptom diagnostic engine that works across medical specialties. Same codebase, any domain. Offline-first for India's realities. Designed with safety, transparency, and real-world impact in mind.
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn" onclick="showTab('symptoms'); return false;" style="cursor: pointer;">🔍 Check Symptoms</button>
+                    <button class="btn btn-secondary" onclick="showTab('nutrition'); return false;" style="cursor: pointer;">🥗 Nutrition Plan</button>
+                    <button class="btn btn-secondary" onclick="window.open('https://vivuwhitcg.github.io/DentalAi/', '_blank'); return false;" style="cursor: pointer;">🦷 Dental AI</button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">💡 Wellness Tips & Insights</div>
+                    <div id="tipsContainer" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                        <div id="randomTip" style="padding: 1.2rem; background: rgba(74,222,128,0.1); border-radius: 12px; border-left: 3px solid var(--success); color: var(--text-secondary); line-height: 1.7; font-size: 13px;">💡 Stay hydrated!</div>
+                        <button class="btn btn-secondary btn-small" onclick="loadMoreTips(); return false;" style="width: 100%; cursor: pointer;">↻ Load More Tips</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📊 Quick Stats</div>
+                    <div class="reminders-grid">
+                        <div class="reminder-card">
+                            <div class="reminder-icon">🔍</div>
+                            <div class="reminder-label">Symptoms Checked</div>
+                            <div class="reminder-value" id="checksToday">0</div>
+                        </div>
+                        <div class="reminder-card">
+                            <div class="reminder-icon">📅</div>
+                            <div class="reminder-label">History Entries</div>
+                            <div class="reminder-value" id="historyCount">0</div>
+                        </div>
+                        <div class="reminder-card">
+                            <div class="reminder-icon">🎯</div>
+                            <div class="reminder-label">Plans Made</div>
+                            <div class="reminder-value" id="plansCount">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABOUT SECTION -->
+            <div style="margin-top: 3rem; border-radius: 20px; padding: 3rem 2.5rem; background: radial-gradient(circle at 0% 0%, rgba(56,189,248,0.15), transparent 55%), radial-gradient(circle at 100% 100%, rgba(248,113,113,0.12), transparent 60%), rgba(15,23,42,0.92); border: 1px solid rgba(148,163,184,0.35); box-shadow: var(--shadow-soft);">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <div style="font-size: 32px; font-weight: 900; margin-bottom: 0.8rem; letter-spacing: -0.03em; background: linear-gradient(135deg, #22d3ee, #f97373); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">About HealthHub Pro</div>
+                    <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 600px; margin: 0 auto;">Your comprehensive health companion powered by AI</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                    <!-- Card 1 -->
+                    <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.3); border-radius: 18px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease; animation: fadeInUp 0.7s ease-out;">
+                        <div style="font-size: 48px; margin-bottom: 1.2rem;">🤖</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; letter-spacing: -0.01em;">AI-Powered Analysis</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7;">Our advanced algorithms analyze your symptoms and match them with our comprehensive health database to provide accurate assessments.</div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(34,211,238,0.4); border-radius: 18px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease; animation: fadeInUp 0.8s ease-out;">
+                        <div style="font-size: 48px; margin-bottom: 1.2rem;">🔒</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; letter-spacing: -0.01em;">Privacy First</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7;">All your data is stored locally on your device. We never send information to any server, ensuring complete privacy and security.</div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.3); border-radius: 18px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease; animation: fadeInUp 0.9s ease-out;">
+                        <div style="font-size: 48px; margin-bottom: 1.2rem;">⚡</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; letter-spacing: -0.01em;">Instant Results</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7;">Get immediate analysis and recommendations for your health symptoms with urgency assessment to help you make informed decisions.</div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer in About Section -->
+                <div style="background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.25); border-radius: 14px; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.8;">
+                        <strong style="color: var(--warning);">⚠️ Educational Tool:</strong> HealthHub Pro is designed for educational purposes and symptom exploration. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals for medical concerns.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SYMPTOMS SECTION -->
+        <section id="symptoms" class="section">
+            <div class="card">
+                <div class="card-title">🔍 Symptom Checker</div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 13px;">Enter symptoms to get AI-powered diagnosis suggestions. Find nearby doctors on the map!</p>
+
+                <div class="symptom-input">
+                    <input type="text" id="symptomInput" placeholder="e.g., headache, cough, rash..." autocomplete="off">
+                    <button class="symptom-btn" id="addSymptomBtn" style="cursor: pointer;">Add</button>
+                    <button class="voice-btn" id="voiceBtn" style="cursor: pointer;">🎤</button>
+                </div>
+
+                <div class="symptom-tags" id="symptomTags"></div>
+
+                <div style="margin-bottom: 2rem;">
+                    <button class="btn" id="analyzeSymptomsBtn" style="display: none; cursor: pointer;">Analyze Symptoms</button>
+                    <button class="btn btn-secondary" id="clearSymptomsBtn" style="display: none; margin-left: 0.8rem; cursor: pointer;">Clear</button>
+                </div>
+
+                <div id="diagnosisResult" style="display: none;"></div>
+                <div id="loadingDiagnosis" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your symptoms...</p>
+                </div>
+
+                <div id="mapContainer">
+                    <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 1.2rem;">📍 Find Nearby Doctors & Hospitals</div>
+                    <div id="map"></div>
+                    <button class="btn" onclick="showNearbyDoctors(); return false;" style="width: 100%; margin-bottom: 1.5rem; cursor: pointer;">🗺️ Show Doctors on Map</button>
+                    <div id="doctorsList" class="doctor-list" style="display: none;">
+                        <div style="color: var(--primary); font-weight: 700; margin-bottom: 1rem; font-size: 12px;">📍 10 NEAREST CLINICS & HOSPITALS:</div>
+                        <div id="doctorsListContent"></div>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    ⚠️ <strong>Disclaimer:</strong> Educational purposes only. Always consult healthcare professionals. For emergencies, call 911/112.
+                </div>
+            </div>
+        </section>
+
+        <!-- HISTORY SECTION -->
+        <section id="history" class="section">
+            <div class="card">
+                <div class="card-title">📅 Symptom History</div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 13px;">Track patterns of symptoms over time to identify recurring issues.</p>
+                <div id="historyTimeline" class="timeline">
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">No history yet. Check symptoms to get started.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NUTRITION SECTION -->
+        <section id="nutrition" class="section">
+            <div class="card">
+                <div class="card-title">🥗 Personalized Nutrition Plan</div>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 13px;">Get accurate calorie and macro calculations customized for your dietary preference.</p>
+                <div id="nutritionContainer">
+                    <div id="nutritionQuiz"></div>
+                    <div id="nutritionResults"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProfileModal()">✕</button>
+            <div class="modal-header">👤 Your Health Profile</div>
+
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="profileName" placeholder="Your name">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Age</label>
+                <input type="number" class="form-input" id="profileAge" placeholder="Your age" min="1" max="120">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select class="form-select" id="profileGender">
+                    <option value="male">♂ Male</option>
+                    <option value="female">♀ Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Known Health Conditions</label>
+                <input type="text" class="form-input" id="profileConditions" placeholder="e.g., diabetes, hypertension">
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="saveProfile(); return false;" style="flex: 1; cursor: pointer;">Save Profile</button>
+                <button class="btn btn-secondary" onclick="closeProfileModal(); return false;" style="flex: 1; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+        
+        const symptomDatabase = {
+            'headache': { name: 'Tension/Migraine Headache', urgency: 'low', medicines: ['Paracetamol 500mg', 'Ibuprofen 200mg', 'Rest'], nextSteps: ['Rest in dark room', 'Stay hydrated', 'See doctor if persists >72hrs'] },
+            'fever': { name: 'Fever/Infection', urgency: 'moderate', medicines: ['Paracetamol 500mg', 'Crocin 650mg', 'Cool compress'], nextSteps: ['Monitor temperature', 'Increase fluids', 'Seek medical help if >39°C'] },
+            'chest pain': { name: 'Chest Discomfort', urgency: 'emergency', medicines: ['CALL 911/112 IMMEDIATELY'], nextSteps: ['Call emergency services now', 'Chew aspirin if available', 'Lie down and rest'] },
+            'shortness of breath': { name: 'Dyspnea', urgency: 'emergency', medicines: ['SEEK IMMEDIATE HELP'], nextSteps: ['Call 911/112 now', 'Sit upright', 'Take slow deep breaths'] },
+            'cough': { name: 'Common Cough', urgency: 'low', medicines: ['Cough syrup', 'Honey + ginger', 'Steam'], nextSteps: ['Avoid irritants', 'Stay hydrated', 'See doctor if >2 weeks'] },
+            'sore throat': { name: 'Sore Throat', urgency: 'low', medicines: ['Throat lozenges', 'Salt water gargle', 'Spray'], nextSteps: ['Avoid hard foods', 'Stay warm', 'Consult if bacterial'] },
+            'nausea': { name: 'Nausea', urgency: 'moderate', medicines: ['Ginger tea', 'Domperidone', 'Lemon water'], nextSteps: ['Eat light meals', 'Avoid strong smells', 'Rest'] },
+            'stomach pain': { name: 'Abdominal Pain', urgency: 'moderate', medicines: ['Antacid gel', 'Light diet', 'Rest'], nextSteps: ['Avoid spicy food', 'Stay hydrated', 'Seek medical evaluation'] },
+            'diarrhea': { name: 'Diarrhea', urgency: 'moderate', medicines: ['Oral rehydration', 'Probiotics', 'Bland diet'], nextSteps: ['Increase fluids', 'Rest digestive system', 'Medical help if bloody'] },
+            'back pain': { name: 'Lower Back Pain', urgency: 'moderate', medicines: ['Ibuprofen 400mg', 'Heat therapy', 'Rest'], nextSteps: ['Avoid heavy lifting', 'Physiotherapy', 'Proper posture'] },
+            'skin rash': { name: 'Skin Rash', urgency: 'moderate', medicines: ['Calamine lotion', 'Hydrocortisone', 'Antihistamine'], nextSteps: ['Avoid scratching', 'Keep clean & dry', 'See dermatologist'] },
+            'anxiety': { name: 'Anxiety Disorder', urgency: 'low', medicines: ['Deep breathing', 'Meditation', 'Counseling'], nextSteps: ['Practice mindfulness', 'Exercise daily', 'Talk to therapist'] },
+            'insomnia': { name: 'Sleep Issues', urgency: 'low', medicines: ['Sleep hygiene', 'Meditation', 'Routine'], nextSteps: ['Set bedtime', 'Avoid screens 1hr before', 'Consult if chronic'] },
+        };
+
+        const healthFacts = [
+            "💧 <strong>Hydration:</strong> Drink 8-10 glasses of water daily for optimal health and energy. Dehydration can cause headaches and fatigue.",
+            "😴 <strong>Sleep:</strong> Aim for 7-9 hours of quality sleep every night for immune health. Good sleep improves memory and concentration.",
+            "🚶 <strong>Activity:</strong> 30 minutes of daily activity reduces disease risk by 35%. Even a brisk walk improves cardiovascular health.",
+            "🥗 <strong>Nutrition:</strong> Eat colorful vegetables - each color provides different nutrients. Green for iron, orange for vitamin A, red for antioxidants.",
+            "🧘 <strong>Stress:</strong> 10 minutes of daily meditation can reduce anxiety by 40%. Deep breathing activates your parasympathetic nervous system.",
+            "❤️ <strong>Heart:</strong> Regular exercise strengthens your heart and improves circulation. Aim for 150 minutes of moderate cardio weekly.",
+        ];
+
+        const allDoctors = [
+            {"name": "AIIMS Delhi", "lat": 28.5693, "lng": 77.1928, "type": "hospital", "phone": "+91-11-2658-8500", "area": "Central Delhi"},
+            {"name": "Delhi Hospital", "lat": 28.5701, "lng": 77.1956, "type": "hospital", "phone": "+91-11-2321-5060", "area": "Central Delhi"},
+            {"name": "Max Healthcare North Delhi", "lat": 28.7500, "lng": 77.1750, "type": "hospital", "phone": "+91-11-4141-1000", "area": "North Delhi"},
+            {"name": "Fortis Hospital Vasant Kunj", "lat": 28.5194, "lng": 77.1930, "type": "hospital", "phone": "+91-11-4159-5000", "area": "South Delhi"},
+            {"name": "Max Super Speciality Hospital Saket", "lat": 28.5244, "lng": 77.1965, "type": "hospital", "phone": "+91-11-4141-1000", "area": "South Delhi"},
+            {"name": "Medanta Hospital East Delhi", "lat": 28.6239, "lng": 77.3150, "type": "hospital", "phone": "+91-11-4141-1003", "area": "East Delhi"},
+            {"name": "Gangaram Hospital", "lat": 28.6000, "lng": 77.2500, "type": "hospital", "phone": "+91-11-2525-5050", "area": "East Delhi"},
+            {"name": "Moolchand Hospital", "lat": 28.5679, "lng": 77.1863, "type": "hospital", "phone": "+91-11-6141-9000", "area": "West Delhi"},
+            {"name": "Artemis Hospital Gurugram", "lat": 28.4595, "lng": 77.0380, "type": "hospital", "phone": "+91-124-4159-5000", "area": "Gurugram"},
+            {"name": "Max Healthcare Gurugram", "lat": 28.4500, "lng": 77.0500, "type": "hospital", "phone": "+91-124-4141-1000", "area": "Gurugram"}
+        ];
+
+        let selectedSymptoms = [];
+        let userProfile = {};
+        let appData = {
+            symptomHistory: [],
+            plansGenerated: 0,
+        };
+        let userLocation = null;
+        let mapInstance = null;
+
+        // ✅ INITIALIZE ON LOAD
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ App Initializing...');
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupNavigation();
+            setupButtons();
+            renderRandomTip();
+            updateDashboardStats();
+            console.log('✅ All buttons initialized!');
+        }
+
+        function setupButtons() {
+            // Profile Button
+            const profileBtn = document.querySelector('button[onclick="openProfileModal()"]');
+            if (profileBtn) profileBtn.addEventListener('click', openProfileModal);
+
+            // Add Symptom Button
+            const addBtn = document.getElementById('addSymptomBtn');
+            if (addBtn) addBtn.addEventListener('click', addSymptom);
+
+            // Analyze Button
+            const analyzeBtn = document.getElementById('analyzeSymptomsBtn');
+            if (analyzeBtn) analyzeBtn.addEventListener('click', analyzeSymptoms);
+
+            // Clear Button
+            const clearBtn = document.getElementById('clearSymptomsBtn');
+            if (clearBtn) clearBtn.addEventListener('click', clearAllSymptoms);
+
+            // Voice Button
+            const voiceBtn = document.getElementById('voiceBtn');
+            if (voiceBtn) voiceBtn.addEventListener('click', startVoiceInput);
+
+            // Doctor Map Button
+            const mapBtn = document.querySelector('button[onclick="showNearbyDoctors()"]');
+            if (mapBtn) mapBtn.addEventListener('click', showNearbyDoctors);
+
+            // Load More Tips
+            const tipsBtn = document.querySelector('button[onclick="loadMoreTips()"]');
+            if (tipsBtn) tipsBtn.addEventListener('click', loadMoreTips);
+
+            // Hero Buttons
+            const heroButtons = document.querySelectorAll('.hero-buttons button');
+            heroButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tab = this.getAttribute('onclick').match(/'([^']+)'/)?.[1];
+                    if (tab) showTab(tab);
+                });
+            });
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+                btn.removeEventListener('click', tabClickHandler);
+                btn.addEventListener('click', tabClickHandler);
+            });
+        }
+
+        function tabClickHandler(e) {
+            e.preventDefault();
+            const tabName = this.getAttribute('data-tab');
+            showTab(tabName);
+        }
+
+        function renderRandomTip() {
+            const tipElement = document.getElementById('randomTip');
+            if (healthFacts && healthFacts.length > 0) {
+                const randomIndex = Math.floor(Math.random() * healthFacts.length);
+                tipElement.innerHTML = healthFacts[randomIndex];
+            }
+        }
+
+        function openProfileModal() {
+            console.log('✅ Opening Profile Modal');
+            document.getElementById('profileModal').classList.add('show');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('show');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            const age = document.getElementById('profileAge').value.trim();
+            const gender = document.getElementById('profileGender').value;
+            const conditions = document.getElementById('profileConditions').value.trim();
+
+            if (!name || !age) {
+                alert('❌ Please fill in Name and Age');
+                return;
+            }
+
+            if (parseInt(age) < 1 || parseInt(age) > 120) {
+                alert('❌ Please enter valid age (1-120)');
+                return;
+            }
+
+            userProfile = { name, age, gender, conditions };
+            alert('✅ Profile saved! Welcome, ' + name);
+            closeProfileModal();
+            updateDashboardStats();
+        }
+
+        function showTab(tabName) {
+            console.log('🔄 Switching to tab:', tabName);
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const targetSection = document.getElementById(tabName);
+            if (targetSection) targetSection.classList.add('active');
+
+            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (tabName === 'history') renderHistoryTimeline();
+            if (tabName === 'nutrition') initNutritionQuiz();
+        }
+
+        function addSymptom() {
+            const input = document.getElementById('symptomInput');
+            const symptom = input.value.toLowerCase().trim();
+
+            if (!symptom) {
+                alert('Please enter a symptom');
+                return;
+            }
+            if (selectedSymptoms.includes(symptom)) {
+                alert('Already added');
+                return;
+            }
+
+            selectedSymptoms.push(symptom);
+            input.value = '';
+            renderSymptomTags();
+            updateAnalyzeButton();
+        }
+
+        function renderSymptomTags() {
+            const container = document.getElementById('symptomTags');
+            container.innerHTML = selectedSymptoms.map(symptom => `
+                <div class="symptom-tag">
+                    ${symptom}
+                    <span class="remove" onclick="removeSymptom('${symptom}')">✕</span>
+                </div>
+            `).join('');
+        }
+
+        function removeSymptom(symptom) {
+            selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+            renderSymptomTags();
+            updateAnalyzeButton();
+        }
+
+        function updateAnalyzeButton() {
+            const analyzBtn = document.getElementById('analyzeSymptomsBtn');
+            const clearBtn = document.getElementById('clearSymptomsBtn');
+            if (selectedSymptoms.length > 0) {
+                analyzBtn.style.display = 'inline-block';
+                clearBtn.style.display = 'inline-block';
+            } else {
+                analyzBtn.style.display = 'none';
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        function clearAllSymptoms() {
+            selectedSymptoms = [];
+            renderSymptomTags();
+            updateAnalyzeButton();
+            document.getElementById('diagnosisResult').style.display = 'none';
+            document.getElementById('mapContainer').classList.remove('show');
+        }
+
+        function analyzeSymptoms() {
+            const emergencyKeywords = ['chest pain', 'difficulty breathing', 'shortness of breath', 'severe bleeding', 'unconscious'];
+            if (emergencyKeywords.some(keyword => selectedSymptoms.some(s => s.includes(keyword)))) {
+                showEmergencyAlert();
+                return;
+            }
+
+            const loading = document.getElementById('loadingDiagnosis');
+            const result = document.getElementById('diagnosisResult');
+
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+
+                let matches = [];
+                selectedSymptoms.forEach(symptom => {
+                    if (symptomDatabase[symptom]) {
+                        matches.push({
+                            symptom: symptom,
+                            ...symptomDatabase[symptom],
+                            confidence: 70 + Math.random() * 25
+                        });
+                    }
+                });
+
+                if (matches.length === 0) {
+                    result.innerHTML = `
+                        <div style="text-align: center; padding: 2.5rem; color: var(--text-secondary); background: rgba(249,115,115,0.1); border-radius: 16px; border: 1px solid rgba(249,115,115,0.2);">
+                            <div style="font-size: 28px; margin-bottom: 0.8rem;">❌</div>
+                            <div style="font-weight: 700; margin-bottom: 0.6rem; color: var(--text-primary); font-size: 15px;">No diagnosis found</div>
+                            <div style="font-size: 12px;">Try: <strong>headache, fever, cough, skin rash, chest pain, sore throat, nausea, stomach pain, back pain, diarrhea, anxiety, insomnia</strong></div>
+                        </div>
+                    `;
+                } else {
+                    matches.sort((a, b) => b.confidence - a.confidence);
+                    const primary = matches[0];
+
+                    let urgencyClass = 'urgency-low';
+                    if (primary.urgency === 'emergency') urgencyClass = 'urgency-emergency';
+                    else if (primary.urgency === 'high') urgencyClass = 'urgency-high';
+                    else if (primary.urgency === 'moderate') urgencyClass = 'urgency-moderate';
+
+                    appData.symptomHistory.unshift({
+                        symptoms: selectedSymptoms,
+                        diagnosis: primary.name,
+                        urgency: primary.urgency,
+                        date: new Date().toLocaleDateString(),
+                        time: new Date().toLocaleTimeString(),
+                    });
+
+                    if (appData.symptomHistory.length > 50) appData.symptomHistory.pop();
+
+                    result.innerHTML = `
+                        <div class="diagnosis-result">
+                            <div class="urgency-badge ${urgencyClass}">
+                                ${primary.urgency.toUpperCase()} URGENCY
+                            </div>
+                            <div class="diagnosis-title">📋 ${primary.name}</div>
+                            <div class="next-steps">
+                                <h5>✅ Next Steps</h5>
+                                <ul>
+                                    ${primary.nextSteps.map(step => `<li>${step}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="medicines-section">
+                                <h4>💊 Recommended Treatments</h4>
+                                ${primary.medicines.map(med => `<div class="medicine-item">✓ ${med}</div>`).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('mapContainer').classList.add('show');
+                }
+
+                result.style.display = 'block';
+            }, 1500);
+        }
+
+        function renderHistoryTimeline() {
+            const timeline = document.getElementById('historyTimeline');
+            if (appData.symptomHistory.length === 0) {
+                timeline.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">No history yet. Check symptoms to get started.</div>';
+                return;
+            }
+
+            timeline.innerHTML = appData.symptomHistory.map(entry => `
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">${entry.date} at ${entry.time}</div>
+                        <div class="timeline-symptom">${entry.symptoms.join(', ')}</div>
+                        <div class="timeline-diagnosis">📋 ${entry.diagnosis}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showEmergencyAlert() {
+            const alert = document.getElementById('emergencyAlert');
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Voice input not supported on your browser');
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            const voiceBtn = document.getElementById('voiceBtn');
+            voiceBtn.textContent = '🎤 Listening...';
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript + ' ';
+                }
+                document.getElementById('symptomInput').value = transcript.toLowerCase().trim();
+                voiceBtn.textContent = '🎤';
+            };
+
+            recognition.onerror = () => {
+                voiceBtn.textContent = '🎤';
+            };
+
+            recognition.start();
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function showNearbyDoctors() {
+            console.log('✅ Loading doctors...');
+            if (!userLocation) {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            userLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            renderMapWithDoctors();
+                        },
+                        (error) => {
+                            console.log('Using default location');
+                            userLocation = { lat: 28.4595, lng: 77.0266 };
+                            renderMapWithDoctors();
+                        }
+                    );
+                } else {
+                    userLocation = { lat: 28.4595, lng: 77.0266 };
+                    renderMapWithDoctors();
+                }
+            } else {
+                renderMapWithDoctors();
+            }
+        }
+
+        function renderMapWithDoctors() {
+            if (!mapInstance) {
+                mapInstance = L.map('map').setView([userLocation.lat, userLocation.lng], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(mapInstance);
+            } else {
+                mapInstance.setView([userLocation.lat, userLocation.lng], 12);
+            }
+
+            mapInstance.eachLayer((layer) => {
+                if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+                    mapInstance.removeLayer(layer);
+                }
+            });
+
+            L.circleMarker([userLocation.lat, userLocation.lng], {
+                radius: 9,
+                fillColor: '#22d3ee',
+                color: '#22d3ee',
+                weight: 3,
+                opacity: 1,
+                fillOpacity: 0.9
+            }).addTo(mapInstance).bindPopup('<b>📍 Your Location</b>');
+
+            allDoctors.forEach((doctor) => {
+                const distance = calculateDistance(userLocation.lat, userLocation.lng, doctor.lat, doctor.lng);
+                
+                L.circleMarker([doctor.lat, doctor.lng], {
+                    radius: 5,
+                    fillColor: '#f97373',
+                    color: '#f97373',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.75
+                }).addTo(mapInstance).bindPopup(`
+                    <div style="font-weight: 700;">${doctor.name}</div>
+                    <div style="font-size: 11px; margin-top: 4px;">
+                        📍 ${doctor.area}<br>
+                        📏 ${distance.toFixed(1)} km<br>
+                        📞 ${doctor.phone}
+                    </div>
+                `);
+            });
+
+            const nearestDoctors = allDoctors.map(doc => ({
+                ...doc,
+                distance: calculateDistance(userLocation.lat, userLocation.lng, doc.lat, doc.lng)
+            })).sort((a, b) => a.distance - b.distance).slice(0, 10);
+
+            const listHtml = nearestDoctors.map(doc => `
+                <div class="doctor-item" onclick="openGoogleMaps(${doc.lat}, ${doc.lng})">
+                    <div class="doctor-name">🏥 ${doc.name}</div>
+                    <div class="doctor-info">📍 ${doc.distance.toFixed(1)} km • ${doc.area} • 📞 ${doc.phone}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('doctorsListContent').innerHTML = listHtml;
+            document.getElementById('doctorsList').style.display = 'block';
+        }
+
+        function openGoogleMaps(lat, lng) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+        }
+
+        function initNutritionQuiz() {
+            const quizHTML = `
+                <div style=\"max-width: 700px;\">
+                    <div style=\"background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); border-radius: 14px; padding: 2rem; margin-bottom: 2rem;\">
+                        <div style=\"font-weight: 700; color: var(--primary); margin-bottom: 1.2rem; font-size: 14px; letter-spacing: -0.01em;\">📋 Your Personal Health Details</div>
+                        <p style=\"color: var(--text-secondary); font-size: 12px; margin-bottom: 2rem; line-height: 1.6;\">We'll generate your personalized nutrition plan based on your details. No profile needed!</p>
+                        
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Your Age</label>
+                            <input type=\"number\" id=\"nutritionAge\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\" placeholder=\"e.g., 25\" min=\"1\" max=\"120\">
+                        </div>
+
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Gender</label>
+                            <select id=\"nutritionGender\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\">
+                                <option value=\"male\">♂ Male</option>
+                                <option value=\"female\">♀ Female</option>
+                                <option value=\"other\">Other</option>
+                            </select>
+                        </div>
+
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Weight (kg)</label>
+                            <input type=\"number\" id=\"nutritionWeight\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\" placeholder=\"e.g., 70\" min=\"1\" max=\"300\">
+                        </div>
+
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Height (cm)</label>
+                            <input type=\"number\" id=\"nutritionHeight\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\" placeholder=\"e.g., 175\" min=\"1\" max=\"250\">
+                        </div>
+
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Goal</label>
+                            <select id=\"goal\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\">
+                                <option value=\"fat_loss\">💪 Lose Weight</option>
+                                <option value=\"muscle_gain\">🏋️ Build Muscle</option>
+                                <option value=\"maintenance\" selected>⚖️ Maintain Weight</option>
+                            </select>
+                        </div>
+
+                        <div style=\"margin-bottom: 1.5rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Activity Level</label>
+                            <select id=\"activity\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\">
+                                <option value=\"sedentary\">Sedentary (Little or no exercise)</option>
+                                <option value=\"light\">Light (1-3 days/week)</option>
+                                <option value=\"moderate\" selected>Moderate (3-5 days/week)</option>
+                                <option value=\"active\">Very Active (6-7 days/week)</option>
+                            </select>
+                        </div>
+
+                        <div style=\"margin-bottom: 2rem;\">
+                            <label style=\"display: block; margin-bottom: 0.6rem; font-weight: 700; font-size: 12px; color: var(--text-primary); text-transform: uppercase; letter-spacing: -0.01em;\">Dietary Preference</label>
+                            <select id=\"diet\" style=\"width: 100%; padding: 10px 14px; background: rgba(34,211,238,0.05); border: 1px solid rgba(148,163,184,0.4); color: var(--text-primary); border-radius: 999px; font-size: 13px; font-family: inherit;\">
+                                <option value=\"vegetarian\">🌱 Vegetarian</option>
+                                <option value=\"non_vegetarian\" selected>🍗 Non-Vegetarian</option>
+                                <option value=\"vegan\">🥬 Vegan</option>
+                            </select>
+                        </div>
+
+                        <div style=\"display: flex; gap: 1rem;\">
+                            <button class=\"btn\" onclick=\"generateNutritionPlan()\" style=\"flex: 1; font-size: 13px;\">🚀 Generate My Plan</button>
+                            <button class=\"btn btn-secondary\" onclick=\"resetNutrition()\" style=\"flex: 1; font-size: 13px;\">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('nutritionQuiz').innerHTML = quizHTML;
+        }
+
+        const foodSources = {
+            vegetarian: {
+                protein: ['Paneer (25g/100g)', 'Lentils (9g/100g)', 'Chickpeas (19g/100g)', 'Tofu (15g/100g)', 'Greek Yogurt (10g/100g)', 'Almonds (21g/100g)'],
+                carbs: ['Brown Rice (45g/100g)', 'Oatmeal (66g/100g)', 'Sweet Potato (20g/100g)', 'Whole Wheat Bread (43g/100g)', 'Banana (27g/100g)', 'Quinoa (57g/100g)'],
+                fats: ['Olive Oil (100g/100g)', 'Coconut Oil (100g/100g)', 'Ghee (100g/100g)', 'Nuts & Seeds (50-60g/100g)', 'Avocado (15g/100g)', 'Sesame Oil (100g/100g)']
+            },
+            non_vegetarian: {
+                protein: ['Chicken Breast (31g/100g)', 'Fish (25g/100g)', 'Eggs (13g/100g)', 'Lean Beef (26g/100g)', 'Prawns (24g/100g)', 'Turkey (29g/100g)'],
+                carbs: ['Brown Rice (45g/100g)', 'Sweet Potato (20g/100g)', 'Oatmeal (66g/100g)', 'Whole Wheat Bread (43g/100g)', 'Banana (27g/100g)', 'Millets (60g/100g)'],
+                fats: ['Olive Oil (100g/100g)', 'Fish Oil (100g/100g)', 'Ghee (100g/100g)', 'Coconut Oil (100g/100g)', 'Nuts (50-60g/100g)', 'Peanut Oil (100g/100g)']
+            },
+            vegan: {
+                protein: ['Lentils (9g/100g)', 'Chickpeas (19g/100g)', 'Tofu (15g/100g)', 'Tempeh (19g/100g)', 'Hemp Seeds (10g/100g)', 'Pumpkin Seeds (30g/100g)'],
+                carbs: ['Brown Rice (45g/100g)', 'Oatmeal (66g/100g)', 'Sweet Potato (20g/100g)', 'Millets (60g/100g)', 'Barley (77g/100g)', 'Banana (27g/100g)'],
+                fats: ['Coconut Oil (100g/100g)', 'Olive Oil (100g/100g)', 'Flax Oil (100g/100g)', 'Nuts & Seeds (50-60g/100g)', 'Avocado (15g/100g)', 'Sesame Oil (100g/100g)']
+            }
+        };
+
+        function generateNutritionPlan() {
+            const goal = document.getElementById('goal').value;
+            const activity = document.getElementById('activity').value;
+            const diet = document.getElementById('diet').value;
+            const gender = document.getElementById('nutritionGender').value;
+            const a = parseInt(document.getElementById('nutritionAge').value);
+            const w = parseInt(document.getElementById('nutritionWeight').value);
+            const h = parseInt(document.getElementById('nutritionHeight').value);
+
+            if (!a || !w || !h) {
+                alert('❌ Please fill in all fields');
+                return;
+            }
+
+            if (a < 1 || a > 120 || w < 1 || w > 300 || h < 1 || h > 250) {
+                alert('❌ Please enter valid details');
+                return;
+            }
+
+            let bmr = gender === 'male'
+                ? 10 * w + 6.25 * h - 5 * a + 5
+                : 10 * w + 6.25 * h - 5 * a - 161;
+
+            const activityMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725 };
+            let dailyCalories = bmr * activityMultipliers[activity];
+
+            if (goal === 'fat_loss') dailyCalories *= 0.75;
+            else if (goal === 'muscle_gain') dailyCalories *= 1.15;
+            dailyCalories = Math.round(dailyCalories);
+
+            let proteinPercent = 30, carbPercent = 50, fatPercent = 20;
+            if (goal === 'muscle_gain') {
+                proteinPercent = 35;
+                carbPercent = 45;
+            } else if (goal === 'fat_loss') {
+                proteinPercent = 35;
+                carbPercent = 45;
+            }
+
+            const proteinCalories = dailyCalories * (proteinPercent / 100);
+            const carbCalories = dailyCalories * (carbPercent / 100);
+            const fatCalories = dailyCalories * (fatPercent / 100);
+
+            const proteinGrams = Math.round(proteinCalories / 4);
+            const carbGrams = Math.round(carbCalories / 4);
+            const fatGrams = Math.round(fatCalories / 9);
+
+            const mealCalories = Math.round(dailyCalories / 4);
+            const mealProtein = Math.round(proteinGrams / 4);
+            const mealCarbs = Math.round(carbGrams / 4);
+            const mealFats = Math.round(fatGrams / 4);
+
+            const sources = foodSources[diet];
+            const proteinSources = sources.protein.slice(0, 3).join(', ');
+            const carbSources = sources.carbs.slice(0, 3).join(', ');
+            const fatSources = sources.fats.slice(0, 3).join(', ');
+
+            const html = `
+                <div class=\"nutrition-chart\">
+                    <div style=\"background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); border-radius: 14px; padding: 1.2rem; margin-bottom: 2rem;\">
+                        <div style=\"font-size: 11px; color: var(--text-secondary); margin-bottom: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700;\">👤 Your Details</div>
+                        <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; font-size: 12px;\">
+                            <div><span style=\"color: var(--text-secondary);\">Age:</span> <span style=\"color: var(--success); font-weight: 700;\">${a} yrs</span></div>
+                            <div><span style=\"color: var(--text-secondary);\">Weight:</span> <span style=\"color: var(--success); font-weight: 700;\">${w} kg</span></div>
+                            <div><span style=\"color: var(--text-secondary);\">Height:</span> <span style=\"color: var(--success); font-weight: 700;\">${h} cm</span></div>
+                            <div><span style=\"color: var(--text-secondary);\">Goal:</span> <span style=\"color: var(--success); font-weight: 700;\">${goal.replace(/_/g, ' ').toUpperCase()}</span></div>
+                        </div>
+                    </div>
+
+                    <div style=\"background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(74,222,128,0.1)); border-radius: 18px; padding: 2rem; margin-bottom: 2rem; text-align: center; border: 1px solid rgba(34,211,238,0.3);\">
+                        <div style=\"font-size: 12px; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;\">✅ Daily Target</div>
+                        <div style=\"font-size: 42px; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;\">${dailyCalories}</div>
+                        <div style=\"font-size: 12px; color: var(--text-secondary);\">Calories per day</div>
+                    </div>
+
+                    <div style=\"background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2); border-radius: 16px; padding: 1.8rem; margin-bottom: 2rem;\">
+                        <div style=\"font-weight: 700; color: var(--primary); margin-bottom: 1.2rem; font-size: 14px; text-transform: uppercase; letter-spacing: -0.01em;\">📊 Macro Breakdown</div>
+                        <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;\">
+                            <div style=\"background: rgba(249,115,115,0.1); padding: 1.2rem; border-radius: 14px; border: 1px solid rgba(249,115,115,0.3); text-align: center;\">
+                                <div style=\"font-size: 26px; font-weight: 900; color: #fecaca; margin-bottom: 0.3rem;\">${proteinGrams}g</div>
+                                <div style=\"font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.4rem;\">Protein</div>
+                                <div style=\"font-size: 12px; color: var(--text-secondary);\">${proteinPercent}% daily</div>
+                            </div>
+                            <div style=\"background: rgba(34,211,238,0.1); padding: 1.2rem; border-radius: 14px; border: 1px solid rgba(34,211,238,0.3); text-align: center;\">
+                                <div style=\"font-size: 26px; font-weight: 900; color: #cffafe; margin-bottom: 0.3rem;\">${carbGrams}g</div>
+                                <div style=\"font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.4rem;\">Carbs</div>
+                                <div style=\"font-size: 12px; color: var(--text-secondary);\">${carbPercent}% daily</div>
+                            </div>
+                            <div style=\"background: rgba(74,222,128,0.1); padding: 1.2rem; border-radius: 14px; border: 1px solid rgba(74,222,128,0.3); text-align: center;\">
+                                <div style=\"font-size: 26px; font-weight: 900; color: #dcfce7; margin-bottom: 0.3rem;\">${fatGrams}g</div>
+                                <div style=\"font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.4rem;\">Fats</div>
+                                <div style=\"font-size: 12px; color: var(--text-secondary);\">${fatPercent}% daily</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style=\"background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.2); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem;\">
+                        <div style=\"font-weight: 700; color: var(--warning); margin-bottom: 1.2rem; font-size: 13px; text-transform: uppercase; letter-spacing: -0.01em;\">🍽️ Per Meal (4 meals/day)</div>
+                        <div style=\"display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 12px; text-align: center;\">
+                            <div><div style=\"font-weight: 800; color: var(--primary); font-size: 16px;\">${mealCalories}</div><div style=\"color: var(--text-secondary); font-size: 10px; margin-top: 0.3rem;\">Cal</div></div>
+                            <div><div style=\"font-weight: 800; color: #fecaca; font-size: 16px;\">${mealProtein}g</div><div style=\"color: var(--text-secondary); font-size: 10px; margin-top: 0.3rem;\">Protein</div></div>
+                            <div><div style=\"font-weight: 800; color: #cffafe; font-size: 16px;\">${mealCarbs}g</div><div style=\"color: var(--text-secondary); font-size: 10px; margin-top: 0.3rem;\">Carbs</div></div>
+                            <div><div style=\"font-weight: 800; color: #dcfce7; font-size: 16px;\">${mealFats}g</div><div style=\"color: var(--text-secondary); font-size: 10px; margin-top: 0.3rem;\">Fats</div></div>
+                        </div>
+                    </div>
+
+                    <div style=\"background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2); border-radius: 16px; padding: 1.5rem;\">
+                        <div style=\"font-weight: 700; color: var(--success); margin-bottom: 1rem; font-size: 13px; text-transform: uppercase; letter-spacing: -0.01em;\">🥗 Food Sources (${diet === 'vegetarian' ? 'Vegetarian' : diet === 'vegan' ? 'Vegan' : 'Non-Vegetarian'})</div>
+                        <div style=\"display: grid; gap: 0.8rem;\">
+                            <div style=\"background: rgba(249,115,115,0.08); padding: 0.9rem; border-radius: 10px; border-left: 3px solid #fecaca;\"><div style=\"font-size: 10px; color: #fecaca; font-weight: 700; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;\">🥚 Protein</div><div style=\"font-size: 12px; color: var(--text-secondary); line-height: 1.5;\">${proteinSources}</div></div>
+                            <div style=\"background: rgba(34,211,238,0.08); padding: 0.9rem; border-radius: 10px; border-left: 3px solid #cffafe;\"><div style=\"font-size: 10px; color: #cffafe; font-weight: 700; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;\">🍚 Carbs</div><div style=\"font-size: 12px; color: var(--text-secondary); line-height: 1.5;\">${carbSources}</div></div>
+                            <div style=\"background: rgba(74,222,128,0.08); padding: 0.9rem; border-radius: 10px; border-left: 3px solid #dcfce7;\"><div style=\"font-size: 10px; color: #dcfce7; font-weight: 700; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em;\">🫒 Fats</div><div style=\"font-size: 12px; color: var(--text-secondary); line-height: 1.5;\">${fatSources}</div></div>
+                        </div>
+                    </div>
+
+                    <div class=\"disclaimer\" style=\"margin-top: 2rem;\">
+                        ⚠️ <strong>Disclaimer:</strong> This is an educational estimate. Consult a registered dietitian for personalized recommendations based on your health status, medications, and goals.
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('nutritionResults').innerHTML = html;
+            appData.plansGenerated++;
+        }
+
+        function resetNutrition() {
+            document.getElementById('nutritionResults').innerHTML = '';
+            initNutritionQuiz();
+        }
+
+        function loadMoreTips() {
+            const tipElement = document.getElementById('randomTip');
+            const randomIndex = Math.floor(Math.random() * healthFacts.length);
+            const fact = healthFacts[randomIndex];
+            tipElement.innerHTML = fact;
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('checksToday').textContent = appData.symptomHistory.length;
+            document.getElementById('historyCount').textContent = appData.symptomHistory.length;
+            document.getElementById('plansCount').textContent = appData.plansGenerated;
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
